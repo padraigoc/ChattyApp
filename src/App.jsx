@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import ChatBar from './ChatBar.jsx';
 import Navbar from './Navbar.jsx';
 import Messages from './Message.jsx';
+import MessageList from './MessageList.jsx';
 
 
 class App extends Component {
@@ -11,6 +12,8 @@ class App extends Component {
     super(props);
     this.state = { 
       loading: true,
+      messages: [],
+      currentUser: ""
      };
   }
 
@@ -20,8 +23,21 @@ class App extends Component {
     setTimeout(() => {
       this.setState({ 
         loading: false,
+
         //Data Flow in Chatty - Pass currentUser using props
-        currentUser: {name: "Bob" }
+        currentUser: {username: "Bob" },
+
+        messages: [
+          {
+            username: "Bob",
+            content: "Has anyone seen my marbles?",
+          },
+          {
+            username: "Anonymous",
+            content: "No, I think you lost them. You lost your marbles Bob. You lost them for good."
+          }
+        ]
+
       }
       ); // this triggers a re-render!
     }, 500)
@@ -40,9 +56,12 @@ class App extends Component {
       return (
         <div>
           <Navbar />
-          <Messages />
+
+          <MessageList messages = {this.state.messages}/>
+
           {/* Data Flow in Chatty - Pass currentUser using props */}
-          <ChatBar currentUser = {this.state.currentUser.name}/>
+          <ChatBar currentUser = {this.state.currentUser.username}/>
+
         </div>
       );
     }

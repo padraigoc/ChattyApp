@@ -4,9 +4,10 @@ import MessageList from './MessageList.jsx';
 class Message extends Component {
   render() {
     return (
-      <main className="Message">
-        <MessageList Message={this.props.message} />
-      </main>
+      <div className="message">
+      <span className="message-username">{this.props.message.username}</span>
+      <span className="message-content">{this.props.message.content}</span>
+    </div>
     );
   }
 }
