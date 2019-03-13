@@ -1,5 +1,3 @@
-// server.js
-
 const express = require('express');
 const SocketServer = require('ws').Server;
 
@@ -20,6 +18,17 @@ const wss = new SocketServer({ server });
 // the ws parameter in the callback.
 wss.on('connection', (ws) => {
   console.log('Client connected');
+
+//   ws.on('message', (message) => {
+//     const dataObject = JSON.parse(message);
+//     console.log(message);
+//   });
+
+
+//receives a message from our client :)
+ws.on('message', function incoming(data) {
+    console.log('Message from our client: ' + data);
+  });
 
   // Set up a callback for when a client closes the socket. This usually means they closed their browser.
   ws.on('close', () => console.log('Client disconnected'));
