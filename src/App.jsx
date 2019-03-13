@@ -12,7 +12,7 @@ class App extends Component {
     super(props);
     this.state = { 
       loading: true,
-      currentUser: {username: "Bob" },
+      currentUser: {},
 
       messages: [
         {
@@ -26,11 +26,15 @@ class App extends Component {
           content: "No, I think you lost them. You lost your marbles Bob. You lost them for good."
         }
       ]
-
-
      };
      this.onNewPost = this.onNewPost.bind(this);
+     this.onUpdatingUsername = this.onUpdatingUsername.bind(this);
 
+  }
+
+  onUpdatingUsername(content){
+   console.log("This is the username: " + content);
+   this.state.currentUser.username = content; 
   }
 
   //receiving new post
@@ -38,7 +42,11 @@ class App extends Component {
     console.log("This is the parent: " + content);
 
     //adds message to array
-    const newMessage = {id: content.id, username: this.state.currentUser.username, content: content};
+    const newMessage = {
+      id: content.id, 
+      username: this.state.currentUser.username, 
+      content: content};
+      
     const messages = this.state.messages.concat(newMessage);
 
     this.setState({
@@ -81,7 +89,10 @@ class App extends Component {
           <MessageList messages = {this.state.messages}  />
 
           {/* Data Flow in Chatty - Pass currentUser using props */}
-          <ChatBar currentUser = {this.state.currentUser.username} onNewPost={ this.onNewPost } />
+          <ChatBar 
+          currentUser = {this.state.currentUser.username} 
+          onNewPost= {this.onNewPost}
+          onUpdatingUsername = {this.onUpdatingUsername} />
 
         </div>
       );

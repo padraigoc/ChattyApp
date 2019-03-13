@@ -9,35 +9,39 @@ class ChatBar extends Component {
         }
 
         this.handleKeyPress = this.handleKeyPress.bind(this);
+        this.handleUserNameChange = this.handleUserNameChange.bind(this);
     }
 
     //Pressing enter handler
     handleKeyPress = (event) => {
 
         if (event.key === 'Enter') {
-            console.log(event.target.value);
             //pass received text in the input field and passing it up to App
-            // this.setState({
-            //     content: event.target.value
-            // });
-
             //Passing it back to APP .js
             this.props.onNewPost(event.target.value);
-            event.target.value = "";
+        }
+    }
+
+    handleUserNameChange = (event) => {
+
+        if (event.key === 'Enter') {
+            this.props.onUpdatingUsername(event.target.value);
+            //event.target.value = "";
         }
     }
 
     render() {
         console.log(this.props);
         return (
-        
+
             <footer className="chatbar">
-                <input className="chatbar-username" placeholder={this.props.currentUser} />
+                <input className="chatbar-username"
+                    placeholder="Please type a username and press enter"
+                    onKeyPress={this.handleUserNameChange} />
 
                 <input className="chatbar-message"
                     placeholder="Type a message and hit ENTER"
-                    onKeyPress={this.handleKeyPress}
-                    onInput={this.handleKeyPress} />
+                    onKeyPress={this.handleKeyPress} />
 
             </footer>);
     }
