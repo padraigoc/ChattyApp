@@ -29,6 +29,23 @@ class App extends Component {
 
 
      };
+     this.onNewPost = this.onNewPost.bind(this);
+
+  }
+
+  //receiving new post
+  onNewPost(content) {
+    console.log("This is the parent: " + content);
+
+    //adds message to array
+    const newMessage = {id: content.id, username: this.state.currentUser.username, content: content};
+    const messages = this.state.messages.concat(newMessage);
+
+    this.setState({
+      messages: messages,
+      loading: false
+    })
+ 
   }
 
   componentDidMount() {
@@ -54,54 +71,37 @@ class App extends Component {
       <div>
         <Navbar />
           <p>Loading...</p>
-        <ChatBar />
+        <ChatBar c/>
       </div>);
     } else {
       return (
         <div>
           <Navbar />
 
-          <MessageList messages = {this.state.messages}/>
+          <MessageList messages = {this.state.messages}  />
 
           {/* Data Flow in Chatty - Pass currentUser using props */}
-          <ChatBar currentUser = {this.state.currentUser.username}/>
+          <ChatBar currentUser = {this.state.currentUser.username} onNewPost={ this.onNewPost } />
 
         </div>
       );
     }
-  }
 
-    // // once rendered 
-    // componentDidMount() {
-    //   // After half a second, set `loading` to false in the state.
-    //   setTimeout(() => {
-    //     this.setState({ 
-    //       loading: false,
-  
-    //       //Data Flow in Chatty - Pass currentUser using props
-    //       currentUser: {username: "Bob" },
-  
-    //       messages: [
-    //         {
-    //           username: "Bob",
-    //           content: "Has anyone seen my marbles?",
-    //         },
-    //         {
-    //           username: "Anonymous",
-    //           content: "No, I think you lost them. You lost your marbles Bob. You lost them for good."
-    //         }
-    //       ]
-  
-    //     }
-    //     ); // this triggers a re-render!
-    //   }, 500)
-      
+
+    //receiving a message
+
+    // onMessageReceived = (message) => {
+
+    //   const newMessage = {
+    //     user = (this.state.currentUser.username),
+    //     content = //get content here
+
+    //   }
     // }
 
 
 
-
-
+  }
 
 
 
