@@ -4,8 +4,13 @@ import Navbar from './Navbar.jsx';
 import Messages from './Message.jsx';
 import MessageList from './MessageList.jsx';
 
+// var myWebsocket = new WebSocket("http://localhost:3001");
+
 
 class App extends Component {
+
+
+
 
   //initial state so the component is initially "loading"
   constructor(props) {
@@ -35,6 +40,8 @@ class App extends Component {
   onUpdatingUsername(content){
    console.log("This is the username: " + content);
    this.state.currentUser.username = content; 
+  // this.props.onNewPost(event.target.value);
+
   }
 
   //receiving new post
@@ -68,7 +75,10 @@ class App extends Component {
         messages: messages,
         loading: false
       })
-      // Update the state of the app component.
+      // Connecting to our websocket. Client connected should appear now re: chat_Server - server.js
+      this.socket = new WebSocket("ws://localhost:3001");
+      console.log("Connected to server")
+      
 
     }, 3000);
   }
@@ -84,7 +94,7 @@ class App extends Component {
     } else {
       return (
         <div>
-          <Navbar />
+          <Navbar currentUser = {this.state.currentUser.username}/>
 
           <MessageList messages = {this.state.messages}  />
 
