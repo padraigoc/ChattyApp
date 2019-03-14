@@ -9,40 +9,29 @@ import MessageList from './MessageList.jsx';
 
 class App extends Component {
 
-
-
-
   //initial state so the component is initially "loading"
   constructor(props) {
     super(props);
     this.state = { 
-      loading: true,
+      loading: false,
       currentUser: {},
+      messages: [{id: 3, username: "Michelle", content: "Hello there!"}]
+    };
 
-      messages: [
-        {
-          id:1,
-          username: "Bob",
-          content: "Has anyone seen my marbles?",
-        },
-        {
-          id:2,
-          username: "Anonymous",
-          content: "No, I think you lost them. You lost your marbles Bob. You lost them for good."
-        }
-      ]
-     };
      this.onNewPost = this.onNewPost.bind(this);
      this.onUpdatingUsername = this.onUpdatingUsername.bind(this);
 
+     // Connecting to our websocket. Client connected should appear now re: chat_Server - server.js
+     this.socket = new WebSocket("ws://localhost:3001");
+
   }
 
+  //handles username change
   onUpdatingUsername(content){
    console.log("This is the username: " + content);
    this.state.currentUser.username = content; 
-  // this.props.onNewPost(event.target.value);
-
   }
+
 
   //receiving new post
   onNewPost(content) {
@@ -52,35 +41,77 @@ class App extends Component {
     const newMessage = {
       id: content.id, 
       username: this.state.currentUser.username, 
-      content: content};
+      content: content
+    };
       
-    const messages = this.state.messages.concat(newMessage);
+    //const messages = this.state.messages.concat(newMessage);
 
-    this.setState({
-      messages: messages,
-      loading: false
-    })
- 
+    //send the message and username to our server
+    var msg = {
+      username: this.state.currentUser.username,
+      content: content
+    };
+    this.socket.send(JSON.stringify(msg));
+    
+    //this sends our message to our server
+    //this.socket.send(content);
+
+    // this.setState({
+    //   messages: messages,
+    //   loading: false,
+    // })
   }
 
   componentDidMount() {
     console.log("componentDidMount <App />");
-    setTimeout(() => {
-      console.log("Simulating incoming message");
-      // Add a new message to the list of messages in the data store
-      const newMessage = {id: 3, username: "Michelle", content: "Hello there!"};
-      const messages = this.state.messages.concat(newMessage);
-       // Calling setState will trigger a call to render() in App and all child components.
-      this.setState({
-        messages: messages,
-        loading: false
-      })
-      // Connecting to our websocket. Client connected should appear now re: chat_Server - server.js
-      this.socket = new WebSocket("ws://localhost:3001");
-      console.log("Connected to server")
-      
+    // setTimeout(() => {
+    //   console.log("Simulating incoming message");
+    //   // Add a new message to the list of messages in the data store
+    //   const newMessage = {id: 3, username: "Michelle", content: "Hello there!"};
+    //   const messages = this.state.messages.concat(newMessage);
+    //    // Calling setState will trigger a call to render() in App and all child components.
+    //   this.setState({
+    //     messages: messages,
+    //     loading: false
+    //   })  
+    //   console.log("Connected to server")
+    // }, 3000);
 
-    }, 3000);
+    //receive messages back from the server!!! :) 
+    this.socket.onmessage = (event) => {
+      console.log("we are in the client side");
+      console.log(event.data);
+
+      var obj = JSON.parse(event.data);
+
+      console.log("text is: " + obj.text)
+      console.log("name is: " + obj.user)
+      console.log("id is: " + obj.id) //obj.id
+
+
+      const newMessage = obj;
+      let allMessages = this.state.messages.concat(newMessage);
+      console.log("all messages ",allMessages);
+      this.setState({
+        messages: allMessages
+      });
+
+      // const newMessage = {
+      //   id: null, 
+      //   username: obj.name, 
+      //   content: obj.text};
+
+      //    const messages = this.state.messages.concat(newMessage);
+
+      //   this.setState({
+      //     messages: messages,
+      //     loading: false
+      //   })
+
+    
+
+
+    }
   }
 
   render() {
@@ -94,7 +125,9 @@ class App extends Component {
     } else {
       return (
         <div>
-          <Navbar currentUser = {this.state.currentUser.username}/>
+          
+          {/* <Navbar currentUser = {this.state.currentUser.username = "Anonymous User"}/> */}
+          <Navbar/>
 
           <MessageList messages = {this.state.messages}  />
 
@@ -107,26 +140,7 @@ class App extends Component {
         </div>
       );
     }
-
-
-    //receiving a message
-
-    // onMessageReceived = (message) => {
-
-    //   const newMessage = {
-    //     user = (this.state.currentUser.username),
-    //     content = //get content here
-
-    //   }
-    // }
-
-
-
   }
-
-
-
-
 }
 
 export default App;

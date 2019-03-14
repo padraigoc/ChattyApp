@@ -19,15 +19,12 @@ class ChatBar extends Component {
             //pass received text in the input field and passing it up to App
             //Passing it back to APP .js
             this.props.onNewPost(event.target.value);
+            event.target.value = "";
         }
     }
 
-    handleUserNameChange = (event) => {
-
-        if (event.key === 'Enter') {
-            this.props.onUpdatingUsername(event.target.value);
-            //event.target.value = "";
-        }
+    handleUserNameChange = (event) => {  
+            this.props.onUpdatingUsername(event.target.value);    
     }
 
     render() {
@@ -36,8 +33,9 @@ class ChatBar extends Component {
 
             <footer className="chatbar">
                 <input className="chatbar-username"
-                    placeholder="Please type a username and press enter"
-                    onKeyPress={this.handleUserNameChange} />
+                    placeholder="Please type a username to chat :)"
+                    onBlur = {this.handleUserNameChange}
+                    />
 
                 <input className="chatbar-message"
                     placeholder="Type a message and hit ENTER"
