@@ -5,7 +5,7 @@ class ChatBar extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            currentUser: this.props.currentUser,
+            currentUser: "",
         }
 
         this.handleKeyPress = this.handleKeyPress.bind(this);
@@ -24,11 +24,10 @@ class ChatBar extends Component {
     }
 
     handleUserNameChange = (event) => {  
-            this.props.onUpdatingUsername(event.target.value);    
+            this.props.onUpdatingUsername(event.target.value);   
     }
 
     render() {
-        console.log(this.props);
         return (
 
             <footer className="chatbar">

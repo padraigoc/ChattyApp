@@ -13,7 +13,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = { 
-      loading: false,
+      loading: true,
       currentUser: {},
       messages: [{id: 3, username: "Michelle", content: "Hello there!"}]
     };
@@ -29,13 +29,23 @@ class App extends Component {
   //handles username change
   onUpdatingUsername(content){
    console.log("This is the username: " + content);
+
+   if(content === ""){
+    this.state.currentUser.username = "Anonymous User"
+   }
+   else {
    this.state.currentUser.username = content; 
+   }
   }
 
 
   //receiving new post
   onNewPost(content) {
     console.log("This is the parent: " + content);
+
+    if(content === ""){
+      window.alert("Please enter a message in order to chat! :)");
+    } else {
 
     //adds message to array
     const newMessage = {
@@ -61,21 +71,21 @@ class App extends Component {
     //   loading: false,
     // })
   }
+  }
 
   componentDidMount() {
     console.log("componentDidMount <App />");
-    // setTimeout(() => {
-    //   console.log("Simulating incoming message");
-    //   // Add a new message to the list of messages in the data store
-    //   const newMessage = {id: 3, username: "Michelle", content: "Hello there!"};
-    //   const messages = this.state.messages.concat(newMessage);
-    //    // Calling setState will trigger a call to render() in App and all child components.
-    //   this.setState({
-    //     messages: messages,
-    //     loading: false
-    //   })  
-    //   console.log("Connected to server")
-    // }, 3000);
+    //loading
+    setTimeout(() => {
+      this.setState({     
+        loading: false
+      })  
+      console.log("Connected to server")
+    }, 1000);
+
+
+    //set user to anymous when the porgram first opens
+    this.state.currentUser.username = "Anonymous User"
 
     //receive messages back from the server!!! :) 
     this.socket.onmessage = (event) => {
@@ -84,14 +94,14 @@ class App extends Component {
 
       var obj = JSON.parse(event.data);
 
-      console.log("text is: " + obj.text)
-      console.log("name is: " + obj.user)
-      console.log("id is: " + obj.id) //obj.id
+      // console.log("text is: " + obj.text)
+      // console.log("name is: " + obj.user)
+      // console.log("id is: " + obj.id) //obj.id
 
 
       const newMessage = obj;
       let allMessages = this.state.messages.concat(newMessage);
-      console.log("all messages ",allMessages);
+      // console.log("all messages ",allMessages);
       this.setState({
         messages: allMessages
       });
@@ -133,7 +143,15 @@ class App extends Component {
 
           {/* Data Flow in Chatty - Pass currentUser using props */}
           <ChatBar 
+
+
           currentUser = {this.state.currentUser.username} 
+
+
+
+
+
+
           onNewPost= {this.onNewPost}
           onUpdatingUsername = {this.onUpdatingUsername} />
 
