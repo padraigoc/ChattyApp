@@ -32,19 +32,24 @@ class App extends Component {
     console.log("This is the new username: " + newUsername);
 
     if (newUsername === "") {
-      this.state.currentUser.username = "Anonymous User"
+      this.state.currentUser.username = "Anonymous"
     } else {
       this.state.currentUser.username = newUsername;
     }
+  
 
     //send notification to our server
     var notifictionMsg = {
       type: "postNotification",
       oldUsername: oldUsername,
       newUsername: newUsername,
-      content: `${oldUsername} has changed their name to ${newUsername}`
+      content: `${oldUsername} has changed their name to ${this.state.currentUser.username}`
     };
+
+    //error handling for checking onBlur - if both anonymous, I don't want to print 'Anonymous' changed to 'Anonymous' 
+    if(oldUsername !== "Anonymous" && newUsername !=="Anonymous"){
     this.socket.send(JSON.stringify(notifictionMsg));
+    }
   }
 
 
@@ -77,7 +82,7 @@ class App extends Component {
 
 
     //set user to anymous when the porgram first opens
-    this.state.currentUser.username = "Anonymous User"
+    this.state.currentUser.username = "Anonymous"
 
     //receive messages back from the server!!! :) 
     this.socket.onmessage = (event) => {
@@ -89,21 +94,21 @@ class App extends Component {
        //determine the type of message, notification or message
      // console.log("type of message is: " + obj.msgType);
 
-      switch(obj.msgType) {
-        case "incomingMessage":
-        console.log("This is a message");
-        break;
-        case "incomingNotification":
-        console.log(obj.oldUsername + " has changed their name to " + obj.newUsername);
-        const nameChange = (obj.oldUsername + " has changed their name to " + obj.newUsername);
+      // switch(obj.msgType) {
+      //   case "incomingMessage":
+      //   console.log("This is a message");
+      //   break;
+      //   case "incomingNotification":
+      //   console.log(obj.oldUsername + " has changed their name to " + obj.newUsername);
+      //   const nameChange = (obj.oldUsername + " has changed their name to " + obj.newUsername);
 
 
         
-        break;
-        default:
-        // show an error in the console if the message type is unknown
-        throw new Error("Unknown event type " + data.type);
-      }
+      //   break;
+      //   default:
+      //   // show an error in the console if the message type is unknown
+      //   throw new Error("Unknown event type " + data.type);
+      // }
 
       // this.state = {
       //   loading: true,
