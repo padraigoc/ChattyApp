@@ -24,38 +24,41 @@ wss.on('connection', (ws) => {
     ws.on('message', function incoming(data) {
         let dataObject = JSON.parse(data);
 
-        switch(dataObject.type) {
-            
-            case "postMessage" :
+        switch (dataObject.type) {
 
-        console.log(
-            '*********** MESSAGE FROM CLIENT TO SERVER ***********' +
-            '\nMessage from user: ' + dataObject.username + 
-            ' \nwith the following text: ' + dataObject.content +
-            ' \nthe message type is: ' + dataObject.type);
-        
+            case "postMessage":
+                console.log(
+                    '\n*********** MESSAGE FROM CLIENT TO SERVER ***********' +
+                    '\nMessage from user: ' + dataObject.username +
+                    ' \nwith the following text: ' + dataObject.content +
+                    ' \nthe message type is: ' + dataObject.type + '\n');
 
-        //send back type and unique user ID
-        dataObject["type"] = "incomingMessage";
-        dataObject["id"] = uuidv1(); 
-        
+                //send back type and unique user ID
+                dataObject["msgType"] = "incomingMessage";
+                dataObject["id"] = uuidv1();
+            break;
+
+            case "postNotification":
+                console.log(
+                    '\n*********** USERNAME NOTIFICATION FROM CLIENT TO SERVER ***********' +
+                    '\nOld Username: ' + dataObject.oldUsername +
+                    ' \nNew Username: ' + dataObject.newUsername +
+                    ' \nthe message type is: ' + dataObject.type + '\n');
+                //send back type
+                dataObject["msgType"] = "incomingNotification";
+                dataObject["id"] = uuidv1();
+                break;
+                
+            default:
+                throw new Error("Unknown event type " + data.type);
+
+        };
+        console.log('\n*********** MESSAGE FROM SERVER TO CLIENT(S) ***********' +
+            '\n Message sent back to all connected devices');
         //send data back!
         wss.clients.forEach(function each(client) {
-                client.send(JSON.stringify(dataObject));
+            client.send(JSON.stringify(dataObject));
         });
-
-        case "postNotification" :
-
-        console.log(
-            '*********** NOTIFICATION FROM CLIENT TO SERVER ***********' +
-            '\nOld Username: ' + dataObject.oldUsername + 
-            ' \nNew Username: ' + dataObject.newUsername);      
-
-    };
-
-   
-        console.log('*********** MESSAGE FROM SERVER TO CLIENT(S) ***********' +
-                '\n Message sent back to all connected devices');
     });
     ws.on('close', () => console.log('Client disconnected'));
 });

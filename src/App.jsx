@@ -26,22 +26,23 @@ class App extends Component {
   }
 
   //handles username change
-  onUpdatingUsername(content) {
+  onUpdatingUsername(newUsername) {
     console.log("This is the old username: " + this.state.currentUser.username);
-    const oldname = this.state.currentUser.username; 
-    console.log("This is the new username: " + content);
+    const oldUsername = this.state.currentUser.username; 
+    console.log("This is the new username: " + newUsername);
 
-    if (content === "") {
+    if (newUsername === "") {
       this.state.currentUser.username = "Anonymous User"
     } else {
-      this.state.currentUser.username = content;
+      this.state.currentUser.username = newUsername;
     }
 
     //send notification to our server
     var notifictionMsg = {
       type: "postNotification",
-      oldUsername: oldname,
-      newUsername: content
+      oldUsername: oldUsername,
+      newUsername: newUsername,
+      content: `${oldUsername} has changed their name to ${newUsername}`
     };
     this.socket.send(JSON.stringify(notifictionMsg));
   }
@@ -49,7 +50,7 @@ class App extends Component {
 
   //receiving new post
   onNewPost(content) {
-    console.log("This is the parent: " + content);
+   // console.log("This is the parent: " + content);
 
     if (content === "") {
       window.alert("Please enter a message in order to chat! :)");
@@ -80,16 +81,40 @@ class App extends Component {
 
     //receive messages back from the server!!! :) 
     this.socket.onmessage = (event) => {
-      console.log("we are in the client side");
-      console.log(event.data);
+      // console.log("we are in the client side");
+      // //console.log(event.data);
+   
+       const obj = JSON.parse(event.data);
 
-      const obj = JSON.parse(event.data);
+       //determine the type of message, notification or message
+     // console.log("type of message is: " + obj.msgType);
 
-      // console.log("text is: " + obj.text)
-      // console.log("name is: " + obj.user)
-      // console.log("id is: " + obj.id) //obj.id
+      switch(obj.msgType) {
+        case "incomingMessage":
+        console.log("This is a message");
+        break;
+        case "incomingNotification":
+        console.log(obj.oldUsername + " has changed their name to " + obj.newUsername);
+        const nameChange = (obj.oldUsername + " has changed their name to " + obj.newUsername);
+
+
+        
+        break;
+        default:
+        // show an error in the console if the message type is unknown
+        throw new Error("Unknown event type " + data.type);
+      }
+
+      // this.state = {
+      //   loading: true,
+      //   currentUser: {},
+      //   messages: [{ id: 3, username: "Michelle", content: "Hello there!" }]
+      // };
+
+
 
       let allMessages = this.state.messages.concat(obj);
+      console.log(allMessages);
       this.setState({
         messages: allMessages
       });
