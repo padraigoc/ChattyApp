@@ -25,31 +25,11 @@ wss.on('connection', (ws) => {
         let dataObject = JSON.parse(data);
         console.log('Message from user ' + dataObject.username + ' with the following text: ' + dataObject.content);
 
-        dataObject["id"] = uuidv1(); //need to update to random key
+        dataObject["id"] = uuidv1(); 
         //send data back!
         wss.clients.forEach(function each(client) {
-            //if (client.readyState === ws.readyState) {
-                //console.log("we are in the broadcasting data");
                 client.send(JSON.stringify(dataObject));
-            //}
         });
     });
-
-    //broadcast('Sending a message from our server');
-
-    //   ws.on('open', function open() {
-    //     ws.send('something');
-    //   });
-
-    //When a client closes the socket.
     ws.on('close', () => console.log('Client disconnected'));
 });
-
-// Broadcast to all.
-// wss.broadcast = function broadcast(data) {
-//     wss.clients.forEach(function each(client) {
-//         if (client.readyState === WebSocket.OPEN) {
-//             client.send(data);
-//         }
-//     });
-// };

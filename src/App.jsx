@@ -9,33 +9,30 @@ import MessageList from './MessageList.jsx';
 
 class App extends Component {
 
-  //initial state so the component is initially "loading"
+
   constructor(props) {
     super(props);
-    this.state = { 
+    this.state = {
       loading: true,
       currentUser: {},
-      messages: [{id: 3, username: "Michelle", content: "Hello there!"}]
+      messages: [{ id: 3, username: "Michelle", content: "Hello there!" }]
     };
 
-     this.onNewPost = this.onNewPost.bind(this);
-     this.onUpdatingUsername = this.onUpdatingUsername.bind(this);
+    this.onNewPost = this.onNewPost.bind(this);
+    this.onUpdatingUsername = this.onUpdatingUsername.bind(this);
 
-     // Connecting to our websocket. Client connected should appear now re: chat_Server - server.js
-     this.socket = new WebSocket("ws://localhost:3001");
-
+    // Connecting to our websocket. Client connected should appear now re: chat_Server - server.js
+    this.socket = new WebSocket("ws://localhost:3001");
   }
 
   //handles username change
-  onUpdatingUsername(content){
-   console.log("This is the username: " + content);
-
-   if(content === ""){
-    this.state.currentUser.username = "Anonymous User"
-   }
-   else {
-   this.state.currentUser.username = content; 
-   }
+  onUpdatingUsername(content) {
+    console.log("This is the username: " + content);
+    if (content === "") {
+      this.state.currentUser.username = "Anonymous User"
+    } else {
+      this.state.currentUser.username = content;
+    }
   }
 
 
@@ -43,43 +40,25 @@ class App extends Component {
   onNewPost(content) {
     console.log("This is the parent: " + content);
 
-    if(content === ""){
+    if (content === "") {
       window.alert("Please enter a message in order to chat! :)");
     } else {
 
-    //adds message to array
-    const newMessage = {
-      id: content.id, 
-      username: this.state.currentUser.username, 
-      content: content
-    };
-      
-    //const messages = this.state.messages.concat(newMessage);
-
-    //send the message and username to our server
-    var msg = {
-      username: this.state.currentUser.username,
-      content: content
-    };
-    this.socket.send(JSON.stringify(msg));
-    
-    //this sends our message to our server
-    //this.socket.send(content);
-
-    // this.setState({
-    //   messages: messages,
-    //   loading: false,
-    // })
-  }
+      var msg = {
+        username: this.state.currentUser.username,
+        content: content
+      };
+      //send message to our server
+      this.socket.send(JSON.stringify(msg));
+    }
   }
 
   componentDidMount() {
-    console.log("componentDidMount <App />");
     //loading
     setTimeout(() => {
-      this.setState({     
+      this.setState({
         loading: false
-      })  
+      })
       console.log("Connected to server")
     }, 1000);
 
@@ -92,69 +71,36 @@ class App extends Component {
       console.log("we are in the client side");
       console.log(event.data);
 
-      var obj = JSON.parse(event.data);
+      const obj = JSON.parse(event.data);
 
       // console.log("text is: " + obj.text)
       // console.log("name is: " + obj.user)
       // console.log("id is: " + obj.id) //obj.id
 
-
-      const newMessage = obj;
-      let allMessages = this.state.messages.concat(newMessage);
-      // console.log("all messages ",allMessages);
+      let allMessages = this.state.messages.concat(obj);
       this.setState({
         messages: allMessages
       });
-
-      // const newMessage = {
-      //   id: null, 
-      //   username: obj.name, 
-      //   content: obj.text};
-
-      //    const messages = this.state.messages.concat(newMessage);
-
-      //   this.setState({
-      //     messages: messages,
-      //     loading: false
-      //   })
-
-    
-
-
     }
   }
 
   render() {
     if (this.state.loading) {
       return (
-      <div>
-        <Navbar />
+        <div>
+          <Navbar />
           <p>Loading...</p>
-        <ChatBar c/>
-      </div>);
+          <ChatBar c />
+        </div>);
     } else {
       return (
         <div>
-          
-          {/* <Navbar currentUser = {this.state.currentUser.username = "Anonymous User"}/> */}
-          <Navbar/>
-
-          <MessageList messages = {this.state.messages}  />
-
-          {/* Data Flow in Chatty - Pass currentUser using props */}
-          <ChatBar 
-
-
-          currentUser = {this.state.currentUser.username} 
-
-
-
-
-
-
-          onNewPost= {this.onNewPost}
-          onUpdatingUsername = {this.onUpdatingUsername} />
-
+          <Navbar />
+          <MessageList messages={this.state.messages} />
+          <ChatBar
+            currentUser={this.state.currentUser.username}
+            onNewPost={this.onNewPost}
+            onUpdatingUsername={this.onUpdatingUsername} />
         </div>
       );
     }
