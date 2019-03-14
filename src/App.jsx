@@ -27,12 +27,23 @@ class App extends Component {
 
   //handles username change
   onUpdatingUsername(content) {
-    console.log("This is the username: " + content);
+    console.log("This is the old username: " + this.state.currentUser.username);
+    const oldname = this.state.currentUser.username; 
+    console.log("This is the new username: " + content);
+
     if (content === "") {
       this.state.currentUser.username = "Anonymous User"
     } else {
       this.state.currentUser.username = content;
     }
+
+    //send notification to our server
+    var notifictionMsg = {
+      type: "postNotification",
+      oldUsername: oldname,
+      newUsername: content
+    };
+    this.socket.send(JSON.stringify(notifictionMsg));
   }
 
 
@@ -44,11 +55,12 @@ class App extends Component {
       window.alert("Please enter a message in order to chat! :)");
     } else {
 
+      //send message to our server
       var msg = {
+        type: "postMessage",
         username: this.state.currentUser.username,
         content: content
       };
-      //send message to our server
       this.socket.send(JSON.stringify(msg));
     }
   }

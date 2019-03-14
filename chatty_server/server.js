@@ -23,13 +23,39 @@ wss.on('connection', (ws) => {
     //receives a message from our client :)
     ws.on('message', function incoming(data) {
         let dataObject = JSON.parse(data);
-        console.log('Message from user ' + dataObject.username + ' with the following text: ' + dataObject.content);
 
+        switch(dataObject.type) {
+            
+            case "postMessage" :
+
+        console.log(
+            '*********** MESSAGE FROM CLIENT TO SERVER ***********' +
+            '\nMessage from user: ' + dataObject.username + 
+            ' \nwith the following text: ' + dataObject.content +
+            ' \nthe message type is: ' + dataObject.type);
+        
+
+        //send back type and unique user ID
+        dataObject["type"] = "incomingMessage";
         dataObject["id"] = uuidv1(); 
+        
         //send data back!
         wss.clients.forEach(function each(client) {
                 client.send(JSON.stringify(dataObject));
         });
+
+        case "postNotification" :
+
+        console.log(
+            '*********** NOTIFICATION FROM CLIENT TO SERVER ***********' +
+            '\nOld Username: ' + dataObject.oldUsername + 
+            ' \nNew Username: ' + dataObject.newUsername);      
+
+    };
+
+   
+        console.log('*********** MESSAGE FROM SERVER TO CLIENT(S) ***********' +
+                '\n Message sent back to all connected devices');
     });
     ws.on('close', () => console.log('Client disconnected'));
 });
