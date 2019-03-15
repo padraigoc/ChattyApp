@@ -14,6 +14,7 @@ class App extends Component {
     super(props);
     this.state = {
       loading: true,
+      connectedUsers: 0,
       currentUser: {},
       messages: [{ id: 3, username: "Michelle", content: "Hello there!" }]
     };
@@ -46,10 +47,10 @@ class App extends Component {
       content: `${oldUsername} has changed their name to ${this.state.currentUser.username}`
     };
 
-    //error handling for checking onBlur - if both anonymous, I don't want to print 'Anonymous' changed to 'Anonymous' 
+    //error handling for checking onBlur - if both anonymous, I don't want to print 'Anonymous' changed to 'Anonymous 
     if(oldUsername !== "Anonymous" && newUsername !=="Anonymous"){
     this.socket.send(JSON.stringify(notifictionMsg));
-    }
+    } 
   }
 
 
@@ -86,37 +87,22 @@ class App extends Component {
 
     //receive messages back from the server!!! :) 
     this.socket.onmessage = (event) => {
-      // console.log("we are in the client side");
-      // //console.log(event.data);
+      console.log("we are in the client side");
+      console.log("Current sessions:" + event.data);
+
+      const obj = JSON.parse(event.data);
+      console.log("Type: " + obj.type);
+
+      //if we receive the number of users
+      if(obj.type === 'NoOfUsers') {
+        console.log("The number of users is " + obj.msg);
+      this.setState({
+        connectedUsers : obj.msg
+      });
+  
+      } else {
    
-       const obj = JSON.parse(event.data);
-
-       //determine the type of message, notification or message
-     // console.log("type of message is: " + obj.msgType);
-
-      // switch(obj.msgType) {
-      //   case "incomingMessage":
-      //   console.log("This is a message");
-      //   break;
-      //   case "incomingNotification":
-      //   console.log(obj.oldUsername + " has changed their name to " + obj.newUsername);
-      //   const nameChange = (obj.oldUsername + " has changed their name to " + obj.newUsername);
-
-
-        
-      //   break;
-      //   default:
-      //   // show an error in the console if the message type is unknown
-      //   throw new Error("Unknown event type " + data.type);
-      // }
-
-      // this.state = {
-      //   loading: true,
-      //   currentUser: {},
-      //   messages: [{ id: 3, username: "Michelle", content: "Hello there!" }]
-      // };
-
-
+     // const obj = JSON.parse(event.data);
 
       let allMessages = this.state.messages.concat(obj);
       console.log(allMessages);
@@ -124,6 +110,7 @@ class App extends Component {
         messages: allMessages
       });
     }
+  }
   }
 
   render() {
@@ -137,7 +124,7 @@ class App extends Component {
     } else {
       return (
         <div>
-          <Navbar />
+          <Navbar  connectedUsers={this.state.connectedUsers} />
           <MessageList messages={this.state.messages} />
           <ChatBar
             currentUser={this.state.currentUser.username}
