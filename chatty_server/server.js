@@ -2,6 +2,8 @@ const express = require('express');
 const SocketServer = require('ws').Server; //error will occur
 const uuidv1 = require('uuid/v1');
 
+const set1 = new Set();
+
 // Set the port to 3001
 const PORT = 3001;
 
@@ -18,9 +20,33 @@ const wss = new SocketServer({
 
 // When a client is connected
 wss.on('connection', (ws) => {
+    
     console.log('Client connected');
+    console.log('Current number of connected users :' + wss.clients.size);
 
-    //receives a message from our client :)
+
+    // let noOfUsers = {
+    //     type : "NoOfUsers",
+    //     username : "",
+    //     content : wss.clients.size,
+    //     msgType : "NoOfConnectedUsers",
+    //     id : uuidv1()
+    // }
+
+    var message = {
+        type : "NoOfUsers",
+        msg : wss.clients.size,
+        id : uuidv1()
+    }
+
+    //send number of connected clients back to clients
+    wss.clients.forEach(function each(client) {
+        client.send(JSON.stringify(message));
+    });
+
+
+
+    //receives a message from our client
     ws.on('message', function incoming(data) {
         let dataObject = JSON.parse(data);
 
@@ -60,5 +86,31 @@ wss.on('connection', (ws) => {
             client.send(JSON.stringify(dataObject));
         });
     });
-    ws.on('close', () => console.log('Client disconnected'));
+
+    ws.on('close', () => {
+
+         //update number of connected users
+         var message = {
+            type : "NoOfUsers",
+            msg : wss.clients.size,
+            id : uuidv1()
+        }
+    
+         //send number of connected clients back to clients
+         wss.clients.forEach(function each(client) {
+             client.send(JSON.stringify(message));
+        });
+ 
+    console.log('Client disconnected - Current number of users :' + wss.clients.size) 
+
+  
+   
+
+  
+    
+    
+  
+}); 
+
+
 });
