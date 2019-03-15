@@ -1,18 +1,27 @@
 h1 {
-  color: rgb(0, 0, 0);
+  color: rgb(39, 39, 39);
 }
 
+
+
 body {
-  background: white;
+  background-image: url("https://wallpapercave.com/wp/wp3067541.png");
+  background-size: cover;
   color: black;
   font-family: 'Open Sans', sans-serif;
   font-size: 14px;
   margin: 70px 0;
 }
 
+p.users {
+  float : right;
+  margin-top: 25px;
+  color: rgb(39, 39, 39);
+}
+
 .chatbar {
-  background: rgb(85, 107, 226);
-  border-top: 1px solid black;
+  background: rgb(255, 255, 255);
+  border-top: 1px; //solid black;
   bottom: 0;
   display: flex;
   left: 0;
@@ -23,7 +32,7 @@ body {
 
 .chatbar-message,
 .chatbar-username {
-  border: 1px solid black;
+  border: 1px solid rgb(192, 192, 192);
   display: block;
   height: 40px;
   line-height: 40px;
@@ -61,14 +70,14 @@ body {
 }
 
 .message-username {
-  color: rgb(85, 107, 226);
+  color: rgb(0, 0, 0);
   flex: 2;
   font-weight: 700;
 }
 
 .navbar {
-  background:  rgb(85, 107, 226);
-  border-bottom: 1px solid black;
+  background:  rgb(255, 255, 255);
+  border-bottom: 1px; //solid black;
   height: 60px;
   left: 0;
   padding: 0 10px;
